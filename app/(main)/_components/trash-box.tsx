@@ -1,20 +1,25 @@
-"use client"
+"use client";
 
 import { ConfirmModal } from "@/components/modals/confirm-modal";
 import { Spinner } from "@/components/spinner";
 import { Input } from "@/components/ui/input";
 import { api } from "@/convex/_generated/api";
-import { Id } from "@/convex/_generated/dataModel";
+import { Doc, Id } from "@/convex/_generated/dataModel";
 import { useMutation, useQuery } from "convex/react";
 import { Search, Trash, Undo } from "lucide-react";
 import { useParams, useRouter } from "next/navigation"
 import { use, useState } from "react";
 import { toast } from "sonner";
 
-export const TrashBox = () => {
+interface TrashBoxProps {
+    parentDocumentId?: Id<"documents">;
+    level?: number;
+    data?: Doc<"documents">[];
+}
+export const TrashBox = ({parentDocumentId, level= 0}: TrashBoxProps) => {
     const router = useRouter();
     const params = useParams();
-    const documents = useQuery(api.documents.getTrash);
+    const documents = useQuery(api.documents.getTrash, {parentDocument : parentDocumentId});
     const restore = useMutation(api.documents.restore);
     const remove = useMutation(api.documents.remove);
 
